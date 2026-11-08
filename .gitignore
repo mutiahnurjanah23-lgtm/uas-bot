@@ -1,0 +1,11 @@
+# RAHASIA - jangan pernah di-commit
+.env
+.env.*
+!.env.example
+
+node_modules/
+.vercel/
+dist/
+# data besar yang bisa ditarik ulang
+data/candles/
+data/local-store.json

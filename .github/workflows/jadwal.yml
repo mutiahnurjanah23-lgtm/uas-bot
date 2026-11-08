@@ -1,0 +1,23 @@
+# Penjadwal gratis dari GitHub Actions (Vercel Hobby cron hanya 1x/hari).
+# Menit 7 dan 37 (bukan menit 0) supaya tidak antre terlalu lama.
+# Isi Secrets di GitHub: Settings > Secrets and variables > Actions:
+#   BOT_URL     = https://nama-proyek-kamu.vercel.app   (tanpa garis miring di akhir)
+#   CRON_SECRET = sama persis dengan CRON_SECRET di Vercel
+name: jadwal-bot
+on:
+  schedule:
+    - cron: "7 * * * *"    # /api/tick     : proses candle 1 jam yang baru tertutup
+    - cron: "37 * * * *"   # /api/snapshot : simpan order book untuk ukur spread
+  workflow_dispatch: {}
+jobs:
+  panggil:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Panggil endpoint bot
+        env:
+          BOT_URL: ${{ secrets.BOT_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ "${{ github.event.schedule }}" = "37 * * * *" ]; then P=/api/snapshot; else P=/api/tick; fi
+          echo "Memanggil $P pada $(date -u)"
+          curl -fsS --retry 3 --retry-delay 20 --max-time 130 -H "Authorization: Bearer $CRON_SECRET" "$BOT_URL$P"

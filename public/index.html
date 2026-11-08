@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard UAS - Bot Dry Run Indodax</title>
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--mute:#6b7785;--line:#e3e7ec;--acc:#2a6fdb;--bad:#c0392b;--ok:#1e8a4c}
+@media(prefers-color-scheme:dark){:root{--bg:#14181d;--card:#1c2229;--ink:#e6eaee;--mute:#92a0ad;--line:#2c3540;--acc:#6aa5ff;--bad:#ff7b6b;--ok:#4cc98a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:16px 14px 60px}h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 10px}
+.s{color:var(--mute);font-size:12px}.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.k{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.k small{display:block;color:var(--mute);font-size:11px}.k b{font-size:17px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.sc{overflow-x:auto;max-height:340px;overflow-y:auto}table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mute);position:sticky;top:0;background:var(--card)}
+.bad{color:var(--bad)}.ok{color:var(--ok)}canvas{width:100%;height:240px}.warn{background:rgba(192,57,43,.1);border:1px solid var(--bad);padding:8px 10px;border-radius:8px;margin:8px 0;font-size:12.5px}
+</style></head><body><div class="w">
+<h1>Bot Dry Run Indodax - Backtest vs Forward Test</h1>
+<div class="s" id="meta">memuat...</div><div id="warn"></div>
+<div class="c"><h2>Ringkasan: backtest dan forward test</h2><div class="two"><div><div class="s">BACKTEST (data historis asli Indodax)</div><div class="g" id="bt"></div></div><div><div class="s">FORWARD TEST (bot berjalan, dry run)</div><div class="g" id="fw"></div></div></div></div>
+<div class="c"><h2>Kecocokan backtest vs forward (jendela waktu yang sama)</h2><div class="g" id="cmp"></div><div class="sc" id="spr"></div></div>
+<div class="c"><h2>Kurva equity forward test (dinilai pada best bid)</h2><canvas id="ch"></canvas></div>
+<div class="c"><h2>Panel operasional</h2><div class="g" id="ops"></div></div>
+<div class="c"><h2>Trade forward test</h2><div class="sc" id="tr"></div></div>
+<div class="c"><h2>Order simulasi (fill di order book)</h2><div class="sc" id="od"></div></div>
+<div class="s">Setiap angka dihitung dari log mentah (skrip <code>hitung_ulang</code>). Bukan saran investasi.</div>
+</div>
+<script>
+const EMBED = /*DATA*/null;
+const $ = id => document.getElementById(id);
+const f = (x, d = 2) => x == null || !isFinite(x) ? "-" : Number(x).toLocaleString("id-ID", { maximumFractionDigits: d, minimumFractionDigits: d });
+const pct = x => x == null || !isFinite(x) ? "-" : f(x) + "%";
+const idr = x => x == null || !isFinite(x) ? "-" : "Rp" + f(x, 0);
+const dt = t => t ? new Date(t * 1000).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", hour12: false }) : "-";
+const kp = (l, v, cls = "") => `<div class="k"><small>${l}</small><b class="${cls}">${v}</b></div>`;
+const col = x => x == null ? "" : x >= 0 ? "ok" : "bad";
+function cards(m, bh, fwd) {
+  if (!m) return '<div class="s">belum ada data</div>';
+  return [kp("Return total", pct(m.returnPct), col(m.returnPct)), m.cagrPct != null && !fwd ? kp("CAGR", pct(m.cagrPct), col(m.cagrPct)) : "",
+    kp("Max drawdown", pct(m.maxDrawdownPct), "bad"), kp("Profit factor", f(m.profitFactor)), kp("Win rate", pct(m.winRatePct)),
+    kp("Rata-rata untung", idr(m.avgWin), "ok"), kp("Rata-rata rugi", idr(m.avgLoss), "bad"), kp("Jumlah trade", m.nTrades),
+    kp("Porsi biaya (fee+spread+slippage)/laba kotor", pct(m.costSharePct)), kp("Buy & hold BTC/IDR", pct(bh), col(bh))].join("");
+}
+function line(cv, series) {
+  const r = devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; cv.width = W * r; cv.height = H * r;
+  const x = cv.getContext("2d"); x.scale(r, r); x.clearRect(0, 0, W, H);
+  const pts = series.filter(p => isFinite(p[1])); if (pts.length < 2) { x.fillStyle = "#888"; x.fillText("belum cukup data", 10, 20); return; }
+  const t0 = pts[0][0], t1 = pts[pts.length - 1][0]; let lo = Math.min(...pts.map(p => p[1])), hi = Math.max(...pts.map(p => p[1])); if (hi === lo) hi = lo + 1;
+  x.strokeStyle = getComputedStyle(document.body).getPropertyValue("--acc"); x.lineWidth = 2; x.beginPath();
+  pts.forEach((p, i) => { const px = 50 + (p[0] - t0) / (t1 - t0 || 1) * (W - 60), py = H - 20 - (p[1] - lo) / (hi - lo) * (H - 40); i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.stroke();
+  x.fillStyle = "#888"; x.font = "11px sans-serif"; x.fillText(idr(hi), 2, 14); x.fillText(idr(lo), 2, H - 22); x.fillText(dt(t0), 50, H - 5); x.fillText(dt(t1), W - 130, H - 5);
+}
+function table(rows, cols) { return `<table><tr>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr>${rows.map(r => `<tr>${cols.map(c => `<td>${c[1](r)}</td>`).join("")}</tr>`).join("")}</table>`; }
+function render(D) {
+  const fw = D.forward, bt = D.backtest, cp = D.compare, c = D.config || {};
+  $("meta").textContent = `Pair: ${(c.pairs || []).join(", ")} | Fee taker: ${c.feeTakerPct}% | Mulai forward: ${dt(c.tradingStartUnix)} | Dibuat: ${dt(D.generatedAt)} WIB`;
+  const w = []; if (bt && bt.warnings) bt.warnings.forEach(x => w.push(x)); if (!bt) w.push("Backtest belum dijalankan / belum diunggah."); if (!cp) w.push("Perbandingan backtest vs forward belum dihitung (npm run bandingkan).");
+  $("warn").innerHTML = w.map(x => `<div class="warn">${x}</div>`).join("");
+  $("bt").innerHTML = cards(bt && bt.metrics, bt && bt.bhBtcPct, false);
+  $("fw").innerHTML = cards(fw.metrics, fw.bhBtcPct, true);
+  if (cp) {
+    $("cmp").innerHTML = [kp("Sinyal identik", `${cp.signalMatch.identical}/${cp.signalMatch.compared} (${pct(cp.signalMatch.pct)})`, cp.signalMatch.pct === 100 ? "ok" : "bad"),
+      kp("Return backtest (jendela sama)", pct(cp.backtestWindow.returnPct)), kp("Return forward", pct(cp.forward.returnPct)), kp("Selisih (poin %)", f(cp.gapReturnPct, 3), col(cp.gapReturnPct)),
+      kp("Trade backtest / forward", `${cp.fills.nBacktest} fill / ${cp.fills.nForward} order`), kp("Median selisih harga fill", pct(cp.fills.medianDiffPct, 3))].join("");
+    $("spr").innerHTML = table(Object.entries(cp.spreadByPair), [["Pair", r => r[0]], ["Spread dipakai backtest", r => pct(r[1].usedInBacktestPct)], ["Spread semua snapshot", r => pct(r[1].measuredAllSnapshotsPct)], ["Jumlah snapshot", r => r[1].nSnapshots]]);
+  } else $("cmp").innerHTML = '<div class="s">belum ada</div>';
+  line($("ch"), fw.equity || []);
+  const o = fw.ops, u = o.uptime;
+  $("ops").innerHTML = [kp("Panggilan terjadwal", u.expected), kp("Terlaksana tepat waktu", u.onTime), kp("Terlambat (lewat batas)", u.late), kp("Terlewat", u.missing),
+    kp("Uptime", pct(u.uptimePct), u.uptimePct >= 95 ? "ok" : "bad"), kp("Error API", o.apiErrors), kp("Pemakaian kill switch", o.killSwitchUses), kp("Daily loss limit kena", o.dailyLossTriggers),
+    kp("Panggilan duplikat dilewati", o.duplicatesSkipped), kp("Data tidak valid", o.invalidData), kp("Median slip vs harga sinyal", pct(o.medianSlipVsSignalPct, 3)), kp("Snapshot order book", o.nSnapshots)].join("");
+  $("tr").innerHTML = table(fw.trades || [], [["Pair", r => r.pair], ["Masuk", r => dt(r.entryT)], ["Keluar", r => dt(r.exitT)], ["Harga masuk", r => idr(r.entryPrice)], ["Harga keluar", r => idr(r.exitPrice)], ["Fee", r => idr(r.fees)], ["P/L bersih", r => `<span class="${col(r.pnl)}">${idr(r.pnl)}</span>`]]);
+  $("od").innerHTML = table(fw.orders || [], [["Waktu", r => dt(r.t)], ["Pair", r => r.pair], ["Sisi", r => r.side], ["Qty", r => f(r.qty, 8)], ["Best bid", r => idr(r.bestBid)], ["Best ask", r => idr(r.bestAsk)], ["Fill rata-rata", r => idr(r.avgFill)], ["Fee", r => idr(r.fee)], ["Selisih vs harga sinyal", r => pct(r.slipVsSignalPct, 3)]]);
+}
+(EMBED ? Promise.resolve(EMBED) : fetch("/api/dashboard-data").then(r => r.json())).then(render).catch(e => { $("meta").textContent = "Gagal memuat data: " + e; });
+</script></body></html>

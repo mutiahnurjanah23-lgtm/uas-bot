@@ -1,0 +1,22 @@
+{
+  "name": "uas-bot-indodax",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bot dry run Indodax di Vercel (UAS Algorithmic Trading)",
+  "scripts": {
+    "cek-aturan": "node --env-file=.env --import tsx scripts/cek_aturan.ts",
+    "tarik-data": "node --import tsx scripts/fetch_history.ts",
+    "backtest": "node --env-file=.env --import tsx scripts/backtest.ts",
+    "ukur-spread": "node --import tsx scripts/ukur_spread.ts",
+    "export-log": "node --env-file=.env --import tsx scripts/export_logs.ts",
+    "bandingkan": "node --env-file=.env --import tsx scripts/bandingkan.ts",
+    "hitung-ulang": "node --import tsx scripts/hitung_ulang.ts",
+    "tes": "node --import tsx scripts/tes_lokal.ts",
+    "cek-tipe": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
