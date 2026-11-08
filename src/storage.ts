@@ -42,7 +42,8 @@ export class FileStore implements Store {
 }
 
 export function makeStore(): Store {
-  const url = process.env.UPSTASH_REDIS_REST_URL, token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+   const token = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
   if (url && token) return new UpstashStore(url, token);
   if (process.env.VERCEL) throw new Error("Storage Upstash belum dikonfigurasi di Vercel (UPSTASH_REDIS_REST_URL/TOKEN)");
   return new FileStore();
