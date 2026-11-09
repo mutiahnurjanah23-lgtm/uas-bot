@@ -74,7 +74,7 @@ Catat hash commit (`git log -1 --format=%H`) dan waktunya.
 
 ### Freeze
 
-* Hash commit freeze: lihat riwayat commit berjudul "FREEZE: aturan, parameter, universe, waktu mulai" (hash dicatat di bawah setelah push)
+* Hash commit freeze: 83ce45f (Senin 9 November 2026, waktu commit lihat riwayat GitHub)
 * Waktu mulai forward test: Senin 9 November 2026, 14.00 WIB (tradingStartUnix = 1794207600)
 * Universe: btcidr, ethidr, solidr, xrpidr, dogeidr (likuiditas diukur di awal periode backtest, lihat docs/STRATEGI.md)
 * Parameter: bl 144, tl 150, adxLen 14, adxMin 25, chandLen 22, chandMult 7; timeframe 1 jam
