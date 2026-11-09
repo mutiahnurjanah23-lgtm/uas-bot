@@ -74,12 +74,12 @@ Catat hash commit (`git log -1 --format=%H`) dan waktunya.
 
 ### Freeze
 
-* Hash commit freeze: _(isi)_
-* Waktu commit (WIB): _(isi)_
-* Waktu mulai forward test (`tradingStartUnix` di config): _(isi)_
-* Universe: _(isi)_
-* Parameter: _(salin dari config.ts)_
-
+* Hash commit freeze: lihat riwayat commit berjudul "FREEZE: aturan, parameter, universe, waktu mulai" (hash dicatat di bawah setelah push)
+* Waktu mulai forward test: Senin 9 November 2026, 14.00 WIB (tradingStartUnix = 1794207600)
+* Universe: btcidr, ethidr, solidr, xrpidr, dogeidr (likuiditas diukur di awal periode backtest, lihat docs/STRATEGI.md)
+* Parameter: bl 144, tl 150, adxLen 14, adxMin 25, chandLen 22, chandMult 7; timeframe 1 jam
+* Eksekusi: beli di ask, jual di bid; fee taker 0,41555%; minimum order Rp25.000; maksimum 3 posisi; 25% equity per posisi; daily loss limit 3%
+* Durasi forward test: kurang dari 10 hari atas persetujuan dosen (pengumpulan 14 November 2026)
 ## Catatan jujur tentang kode ini
 
 * Format respons API Indodax (`history_v2`, `depth`, `server_time`) ditulis berdasarkan dokumentasi publik, **tapi belum diuji ke server asli** dari lingkungan pembuatan. Jalankan `npm run tarik-data` dan lihat apakah bar masuk dengan benar. Kalau ada bidang yang berbeda, perbaiki di `src/indodax.ts` (fungsi `parseCandles` / `depth`) **sebelum freeze**.

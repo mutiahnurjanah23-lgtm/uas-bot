@@ -1,0 +1,42 @@
+{
+ "btcidr": {
+  "n": 9,
+  "spreadPct": 0.06468257760071738,
+  "buyPremiumPct": 0.037119280812558664,
+  "sellDiscountPct": 0.04900785516842587,
+  "nDepthOkBuy": 9,
+  "nDepthOkSell": 9
+ },
+ "ethidr": {
+  "n": 9,
+  "spreadPct": 0.04102774501256475,
+  "buyPremiumPct": 0.04765768898848943,
+  "sellDiscountPct": 0.03510181219128494,
+  "nDepthOkBuy": 9,
+  "nDepthOkSell": 9
+ },
+ "solidr": {
+  "n": 9,
+  "spreadPct": 0.09731443549779473,
+  "buyPremiumPct": 0.04865721774889309,
+  "sellDiscountPct": 0.08165828358424054,
+  "nDepthOkBuy": 9,
+  "nDepthOkSell": 9
+ },
+ "xrpidr": {
+  "n": 9,
+  "spreadPct": 0.07970906192397748,
+  "buyPremiumPct": 0.03985453096198022,
+  "sellDiscountPct": 0.07879879803825984,
+  "nDepthOkBuy": 9,
+  "nDepthOkSell": 9
+ },
+ "dogeidr": {
+  "n": 9,
+  "spreadPct": 0.1579778830963665,
+  "buyPremiumPct": 0.07898894154818592,
+  "sellDiscountPct": 0.10027068309635956,
+  "nDepthOkBuy": 9,
+  "nDepthOkSell": 9
+ }
+}

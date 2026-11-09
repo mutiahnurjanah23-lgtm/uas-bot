@@ -1,0 +1,71 @@
+{
+ "generatedAt": 1794159497,
+ "minKriteria": null,
+ "rows": [
+  {
+   "pair": "btcidr",
+   "bars": 27174,
+   "hari": 1132,
+   "awalData": "2023-10-03",
+   "awalUkur": "2023-10-20",
+   "akhirUkur": "2024-01-18",
+   "medVolHarianAwal": 21792762875.786526,
+   "medVolHarian30HariTerakhir": 19241223244.882202,
+   "lolos3Tahun": true,
+   "lolosKriteria": null,
+   "contoh": "close=1374199000 vol=0.15218565 -> Rp209.133.368/jam"
+  },
+  {
+   "pair": "ethidr",
+   "bars": 27174,
+   "hari": 1132,
+   "awalData": "2023-10-03",
+   "awalUkur": "2023-10-20",
+   "akhirUkur": "2024-01-18",
+   "medVolHarianAwal": 7630845548.604571,
+   "medVolHarian30HariTerakhir": 6181404813.751521,
+   "lolos3Tahun": true,
+   "lolosKriteria": null,
+   "contoh": "close=40503000 vol=1.27005509 -> Rp51.441.041/jam"
+  },
+  {
+   "pair": "solidr",
+   "bars": 27173,
+   "hari": 1132,
+   "awalData": "2023-10-03",
+   "awalUkur": "2023-10-20",
+   "akhirUkur": "2024-01-18",
+   "medVolHarianAwal": 6945369396.3617,
+   "medVolHarian30HariTerakhir": 5636337447.743577,
+   "lolos3Tahun": true,
+   "lolosKriteria": null,
+   "contoh": "close=1620194 vol=28.63888775 -> Rp46.400.554/jam"
+  },
+  {
+   "pair": "xrpidr",
+   "bars": 27174,
+   "hari": 1132,
+   "awalData": "2023-10-03",
+   "awalUkur": "2023-10-20",
+   "akhirUkur": "2024-01-18",
+   "medVolHarianAwal": 5551858088.71254,
+   "medVolHarian30HariTerakhir": 5585692567.755987,
+   "lolos3Tahun": true,
+   "lolosKriteria": null,
+   "contoh": "close=20978 vol=4075.41217324 -> Rp85.493.997/jam"
+  },
+  {
+   "pair": "dogeidr",
+   "bars": 27174,
+   "hari": 1132,
+   "awalData": "2023-10-03",
+   "awalUkur": "2023-10-20",
+   "akhirUkur": "2024-01-18",
+   "medVolHarianAwal": 3901686623.378499,
+   "medVolHarian30HariTerakhir": 1784780850.3686988,
+   "lolos3Tahun": true,
+   "lolosKriteria": null,
+   "contoh": "close=1291 vol=32847.86442727 -> Rp42.406.593/jam"
+  }
+ ]
+}

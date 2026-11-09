@@ -13,13 +13,12 @@ import { loadCandles, loadCosts } from "./lib";
   const data = loadCandles();
   const { costs, warnings } = loadCosts();
   warnings.forEach(x => console.log(x));
-  const allT = Object.values(data).flat().map(c => c.t);
-  const t0 = Math.min(...allT), t1 = Math.max(...allT);
-
+     let t0 = Infinity, t1 = -Infinity;
+   for (const arr of Object.values(data)) for (const c of arr) { if (c.t < t0) t0 = c.t; if (c.t > t1) t1 = c.t; }
   if (process.argv.includes("--grid")) {
     const split = t0 + 0.7 * (t1 - t0);
     const rows: any[] = [];
-    for (const bl of [24, 48, 72]) for (const adxMin of [15, 25]) for (const chandMult of [2.5, 3.5]) {
+      for (const bl of [48, 96, 144, 216]) for (const adxMin of [20, 25, 30]) for (const chandMult of [3.5, 5, 7]) {
       const params = { ...CONFIG.params, bl, adxMin, chandMult };
       const r = simulate(data, CONFIG, costs, { endT: split, params });
       const m = summarize(r.trades, r.equity, CONFIG.risk.initialCash, true);

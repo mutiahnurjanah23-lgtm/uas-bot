@@ -8,7 +8,7 @@ export const CONFIG = {
   // ISI: waktu mulai forward test, dalam DETIK unix (UTC). Contoh membuatnya:
   //   node -e "console.log(Math.floor(new Date('2026-11-09T00:00:00+07:00')/1000))"
   // Sebelum waktu ini bot HANYA mengumpulkan snapshot order book, tidak bertransaksi.
-  tradingStartUnix: 0,
+     tradingStartUnix: 1794207600,
 
   // Timeframe 1 jam (disarankan soal agar trade cukup banyak)
   tf: "60",
@@ -19,8 +19,7 @@ export const CONFIG = {
   pairs: ["btcidr", "ethidr", "solidr", "xrpidr", "dogeidr"],
 
   // Parameter strategi (Donchian + EMA + ADX + Chandelier). Satuan = BAR 1 jam.
-  params: { bl: 48, tl: 150, adxLen: 14, adxMin: 20, chandLen: 22, chandMult: 3 },
-
+   params: { bl: 144, tl: 150, adxLen: 14, adxMin: 25, chandLen: 22, chandMult: 7 },
   exec: {
     // ISI: tarif taker all-in (%) -> pakai yang LEBIH MAHAL antara /api/pairs dan halaman biaya resmi.
     // Cantumkan kedua angka, URL, dan tanggal akses di docs/STRATEGI.md. Selama NaN, bot menolak jalan.
